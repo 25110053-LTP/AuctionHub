@@ -33,6 +33,7 @@ bool loadBids(const string& path, vector<Bid>& out) {
 
 bool lessAsc(const Bid& a, const Bid& b);
 bool isSortedAsc(const vector<Bid>& v);
+void quickSortWrapper(vector<Bid>& v);
 
 // ---------- TODO: Implement these ----------
 void insertionSort(vector<Bid>& v);          // Task A
