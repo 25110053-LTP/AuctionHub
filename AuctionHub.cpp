@@ -75,7 +75,9 @@ void selectionSort(vector<Bid>& v) {
 }
 
 void interchangeSort(vector<Bid>& v) {
+    long long swaps = 0;
     for (size_t i = 0; i + 1 < v.size(); ++i)
         for (size_t j = i + 1; j < v.size(); ++j)
-            if (before(v[j], v[i])) swap(v[i], v[j]);
+            if (before(v[j], v[i])) {swap(v[i], v[j]), ++swaps; };
+    cout << "Total swaps: " << swaps << "\n";
 }
