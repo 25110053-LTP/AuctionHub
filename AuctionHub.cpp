@@ -46,6 +46,21 @@ void quickSort(vector<Bid>& v, int lo, int hi); // Task E
 int main(int argc, char* argv[]) {
     // See per-task instructions.
 
+      if (argc >= 2) {
+        vector<Bid> data;
+        if (!loadBids(argv[1], data)) {
+            cerr << "Cannot open " << argv[1] << "\n";
+            return 1;
+        }
+        cout << "Loaded " << data.size() << " bids from " << argv[1] << "\n";
+        auto t0 = steady_clock::now();
+        quickSortWrapper(data);
+        double ms = duration<double, milli>(steady_clock::now() - t0).count();
+        cout << "Time: " << ms << " ms, "<< (isSortedAsc(data) ? "SORTED OK" : "NOT SORTED!") << "\n";
+        printBids(data, 5);
+        return 0;
+    }
+
     vector<Bid> base = {
         {"alice", 100.0, 1000, 1},
         {"bob",   102.5, 1005, 1},
