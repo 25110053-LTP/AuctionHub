@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include <random>
 using namespace std;
 using namespace std::chrono;
 
@@ -30,6 +31,9 @@ bool loadBids(const string& path, vector<Bid>& out) {
     return true;
 }
 
+bool lessAsc(const Bid& a, const Bid& b);
+bool isSortedAsc(const vector<Bid>& v);
+
 // ---------- TODO: Implement these ----------
 void insertionSort(vector<Bid>& v);          // Task A
 void selectionSort(vector<Bid>& v);          // Task B
@@ -40,7 +44,55 @@ void quickSort(vector<Bid>& v, int lo, int hi); // Task E
 // ---------- Driver ----------
 int main(int argc, char* argv[]) {
     // See per-task instructions.
+
+    vector<Bid> base = {
+        {"alice", 100.0, 1000, 1},
+        {"bob",   102.5, 1005, 1},
+        {"carol", 101.0, 1003, 1},
+        {"dave",  103.0, 1010, 1}
+    };
+
+    // Task A
+    cout << "== Task A: insertion (ascending) ==\n";
+    vector<Bid> a = base;
+    insertionSort(a);
+    printBids(a);
+
+    // Task B
+    cout << "\n== Task B: selection (descending), Top 3 ==\n";
+    vector<Bid> b = base;
+    selectionSort(b);
+    printBids(b, 3);
+
+    // Task C
+    cout << "\n== Task C: interchange (ascending) ==\n";
+    vector<Bid> c = base;
+    interchangeSort(c);
+    printBids(c);
+
+    // Task D
+    cout << "\n== Task D: bubble early stop ==\n";
+    vector<Bid> d1 = a;                      
+    bool s1 = bubbleSortEarlyStop(d1);
+    cout << "Sorted input   -> " << (s1 ? "STABLE" : "UNSTABLE") << "\n";
+    vector<Bid> d2(a.rbegin(), a.rend());     
+    bool s2 = bubbleSortEarlyStop(d2);
+    cout << "Reversed input -> " << (s2 ? "STABLE" : "UNSTABLE") << "\n";
+
+    // Task E
+    cout << "\n== Task E: quicksort, 100,000 bids ==\n";
+    mt19937 rng(42);
+    uniform_real_distribution<double> price(1.0, 1000.0);
+    vector<Bid> big;
+    big.reserve(100000);
+    for (int i = 0; i < 100000; ++i)
+        big.push_back({"user" + to_string(i % 1000), price(rng), (long long)i, 1});
+    auto t0 = steady_clock::now();
+    quickSortWrapper(big);
+    double ms = duration<double, milli>(steady_clock::now() - t0).count();
+    cout << "Time: " << ms << " ms, " << (isSortedAsc(big) ? "SORTED OK" : "NOT SORTED!") << "\n";
     return 0;
+
 }
 
 bool lessAsc(const Bid& a, const Bid& b) {
@@ -51,6 +103,12 @@ bool lessAsc(const Bid& a, const Bid& b) {
 static bool before(const Bid& a, const Bid& b) {
     if (a.amount != b.amount) return a.amount > b.amount;
     return a.timestamp < b.timestamp;
+}
+
+bool isSortedAsc(const vector<Bid>& v) {
+    for (size_t i = 1; i < v.size(); ++i)
+        if (lessAsc(v[i], v[i - 1])) return false;
+    return true;
 }
 
 void insertionSort(vector<Bid>& v) {
