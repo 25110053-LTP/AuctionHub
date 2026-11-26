@@ -43,6 +43,11 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
+bool lessAsc(const Bid& a, const Bid& b) {
+    if (a.amount != b.amount) return a.amount < b.amount;
+    return a.timestamp < b.timestamp;
+}
+
 static bool before(const Bid& a, const Bid& b) {
     if (a.amount != b.amount) return a.amount > b.amount;
     return a.timestamp < b.timestamp;
@@ -52,7 +57,7 @@ void insertionSort(vector<Bid>& v) {
     for (size_t i = 1; i < v.size(); ++i) {
         Bid key = v[i];
         size_t j = i;
-        while (j > 0 && before(key, v[j - 1])) {
+        while (j > 0 && lessAsc(key, v[j - 1])) {
             v[j] = v[j - 1];
             --j;
         }
