@@ -81,3 +81,20 @@ void interchangeSort(vector<Bid>& v) {
             if (before(v[j], v[i])) {swap(v[i], v[j]), ++swaps; };
     cout << "Total swaps: " << swaps << "\n";
 }
+
+bool bubbleSortEarlyStop(vector<Bid>& v) {
+    size_t n = v.size();
+    bool firstPassNoSwap = false;
+    for (size_t i = 0; i + 1 < n; ++i) {
+        bool swapped = false;
+        for (size_t j = 0; j + 1 < n - i; ++j) {
+            if (lessAsc(v[j + 1], v[j])) {
+                swap(v[j], v[j + 1]);
+                swapped = true;
+            }
+        }
+        if (i == 0) firstPassNoSwap = !swapped;  
+        if (!swapped) break;                     
+    }
+    return (n <= 1) ? true : firstPassNoSwap;
+}
